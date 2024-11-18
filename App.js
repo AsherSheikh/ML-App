@@ -1,7 +1,7 @@
-import {View, Text, Image, Button} from 'react-native';
-import React, {useEffect, useState} from 'react';
-import {recognizeImage} from './src/mlkit';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import { View, Text, Image, Button, SafeAreaView } from "react-native";
+import React, { useEffect, useState } from "react";
+import { recognizeImage } from "./src/mlkit";
+import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 
 const App = () => {
   const [imageUri, setImageUri] = useState(null);
@@ -9,15 +9,15 @@ const App = () => {
 
   const captureImage = () => {
     const options = {
-      mediaType: 'photo',
-      cameraType: 'back',
+      mediaType: "photo",
+      cameraType: "back",
       saveToPhotos: true,
     };
-    launchCamera(options, response => {
+    launchCamera(options, (response) => {
       if (response.didCancel) {
-        console.log('User cancelled image picker');
+        console.log("User cancelled image picker");
       } else if (response.errorCode) {
-        console.log('ImagePicker Error: ', response.errorMessage);
+        console.log("ImagePicker Error: ", response.errorMessage);
       } else {
         const uri = response.assets[0].uri;
         setImageUri(uri);
@@ -27,14 +27,14 @@ const App = () => {
   const processImage = () => {
     if (imageUri) {
       recognizeImage(imageUri)
-        .then(response => {
+        ?.then((response) => {
           const blocks = response.blocks;
-          const recognizedText = blocks.map(block => block.text).join('\n');
+          const recognizedText = blocks.map((block) => block.text).join("\n");
           console.log(JSON.stringify(response));
           setText(recognizedText);
         })
-        .catch(error => {
-          console.error('Error recognizing image: ', error);
+        .catch((error) => {
+          console.error("Error recognizing image: ", error);
         });
     }
   };
@@ -43,16 +43,16 @@ const App = () => {
       processImage();
     }
   }, [imageUri]);
+
   const pickImageFromGallery = () => {
-    console.warn('pickImageFromGallery');
     const options = {
-      mediaType: 'photo',
+      mediaType: "photo",
     };
-    launchImageLibrary(options, response => {
+    launchImageLibrary(options, (response) => {
       if (response.didCancel) {
-        console.log('User cancelled image picker');
+        console.log("User cancelled image picker");
       } else if (response.errorCode) {
-        console.log('ImagePicker Error: ', response.errorMessage);
+        console.log("ImagePicker Error: ", response.errorMessage);
       } else {
         const uri = response.assets[0].uri;
         setImageUri(uri);
@@ -61,38 +61,31 @@ const App = () => {
   };
 
   return (
-    <View style={{paddingHorizontal: 10}}>
-      <Text style={{fontWeight: 'bold', marginVertical: 30}}>
-        ML KIT - TEXT RECOGNITION
-      </Text>
-      <Text>
-        <Text style={{fontWeight: 'bold'}}>Text :</Text>
-        {text}
-      </Text>
+    <SafeAreaView style={{ flex: 1 }}>
+      <View style={{ paddingHorizontal: 10 }}>
+        <Text style={{ fontWeight: "bold", marginVertical: 30 }}>ML KIT - TEXT RECOGNITION</Text>
+        <Text>
+          <Text style={{ fontWeight: "bold" }}>Text :</Text>
+          {text}
+        </Text>
 
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          paddingHorizontal: 10,
-          marginVertical: 10,
-        }}>
-        <View style={{width: '48%'}}>
-          <Button
-            title="Open Camera"
-            onPress={captureImage}
-            style={{width: '48%'}}
-          />
-        </View>
-        <View style={{width: '48%'}}>
-          <Button
-            title="Open Gallery"
-            onPress={pickImageFromGallery}
-            style={{width: '48%'}}
-          />
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            paddingHorizontal: 10,
+            marginVertical: 10,
+          }}
+        >
+          <View style={{ width: "48%" }}>
+            <Button title="Open Camera" onPress={captureImage} style={{ width: "48%" }} />
+          </View>
+          <View style={{ width: "48%" }}>
+            <Button title="Open Gallery" onPress={pickImageFromGallery} style={{ width: "48%" }} />
+          </View>
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
