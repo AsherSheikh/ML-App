@@ -63,11 +63,8 @@ const TextRecognition = () => {
 
   return (
     <View style={{ paddingHorizontal: 10, flex: 1 }}>
-      <Text style={{ fontWeight: "bold", marginVertical: 30 }}>ML KIT - TEXT RECOGNITION</Text>
-      <Text>
-        <Text style={{ fontWeight: "bold" }}>Text :</Text>
-        {text}
-      </Text>
+      <Text style={{ fontWeight: "bold", marginVertical: 10 }}>GOOGLE ML-KIT - TEXT RECOGNITION</Text>
+      <Text>{text && <Text style={{ fontWeight: "bold" }}>Text : {text}</Text>}</Text>
 
       <View
         style={{

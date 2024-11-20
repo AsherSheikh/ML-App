@@ -12,9 +12,9 @@ const App = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.buttonsContainer}>
-        {buttons.map((type) => {
+        {buttons.map((type, i) => {
           return (
-            <TouchableOpacity style={styles.buttonContainer} onPress={() => setShow(type.value)}>
+            <TouchableOpacity key={i} style={styles.buttonContainer} onPress={() => setShow(type.value)}>
               <Text style={styles.buttonText}>{type.title}</Text>
             </TouchableOpacity>
           );

@@ -174,37 +174,35 @@ const FaceDetection = () => {
   console.log("compare report :", JSON.stringify(report));
   return (
     <View style={styles.container}>
+      <Text style={{ fontWeight: "bold", marginVertical: 10, paddingHorizontal: 10 }}>GOOGLE ML-KIT - FACE DETECTION</Text>
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        {images?.length > 0 && (
-          <View>
-            <View style={styles.imagesContainer}>
-              <FlatList
-                data={images}
-                renderItem={({ index, item }) => {
-                  return (
-                    <View>
-                      <Image source={{ uri: item?.image?.path }} style={styles.image} />;
-                      <FaceMap
-                        key={Math.random()}
-                        face={item?.faceData}
-                        width={item.image?.width}
-                        height={item.image?.height}
-                        showFrame={showFrame}
-                        showContours={showContours}
-                        showLandmarks={showLandmarks}
-                      />
-                    </View>
-                  );
-                }}
-              />
+        <View style={styles.imagesContainer}>
+          {images?.length > 0 && (
+            <View>
+              {images?.map((item, index) => {
+                return (
+                  <View key={index}>
+                    <Image source={{ uri: item?.image?.path }} style={styles.image} />
+                    <FaceMap
+                      key={Math.random()}
+                      face={item?.faceData}
+                      width={item.image?.width}
+                      height={item.image?.height}
+                      showFrame={showFrame}
+                      showContours={showContours}
+                      showLandmarks={showLandmarks}
+                    />
+                  </View>
+                );
+              })}
+              <View style={styles.switchContainer}>
+                <OptionSwitch label="Show Frame" value={showFrame} onChange={setShowFrame} />
+                <OptionSwitch label="Show Landmarks" value={showLandmarks} onChange={setShowLandmarks} />
+                <OptionSwitch label="Show Contours" value={showContours} onChange={setShowContours} />
+              </View>
             </View>
-            <View style={styles.switchContainer}>
-              <OptionSwitch label="Show Frame" value={showFrame} onChange={setShowFrame} />
-              <OptionSwitch label="Show Landmarks" value={showLandmarks} onChange={setShowLandmarks} />
-              <OptionSwitch label="Show Contours" value={showContours} onChange={setShowContours} />
-            </View>
-          </View>
-        )}
+          )}
+        </View>
         <View style={{ flex: 1, justifyContent: "center", paddingHorizontal: 10 }}>
           {!image1Selected && <ChooseImageButton title={"Choose an Image 1"} onChoose={(currentImage) => handleChoose(currentImage, "face1")} />}
           <Separator />
@@ -235,8 +233,8 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     backgroundColor: "black",
   },
-  compareText: { color: "white", fontSize: 16,fontWeight:'600' },
-  reportText: { color: "black", fontSize: 14, paddingHorizontal: 10,marginVertical:10 },
+  compareText: { color: "white", fontSize: 16, fontWeight: "600" },
+  reportText: { color: "black", fontSize: 14, paddingHorizontal: 10, marginVertical: 10 },
   compareContaier: { width: "90%", height: 50, alignSelf: "center", marginVertical: 20, borderRadius: 10, backgroundColor: "tomato", justifyContent: "center", alignItems: "center" },
   separator: {
     marginVertical: 8,
