@@ -1,7 +1,11 @@
-import {NativeModules} from 'react-native';
+import { NativeModules } from "react-native";
 
-const {TextRecognitionModule} = NativeModules;
+const { TextRecognitionModule, FaceDetection } = NativeModules;
 
-export const recognizeImage = url => {
+export const recognizeImage = (url) => {
   return TextRecognitionModule.recognizeImage(url);
+};
+
+export const detectFace = (url, options) => {
+  return FaceDetection.detect(url, options);
 };

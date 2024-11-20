@@ -28,7 +28,7 @@ const TextRecognition = () => {
     if (imageUri) {
       recognizeImage(imageUri)
         ?.then((response) => {
-          console.log(JSON.stringify("recognizeImage res:", response));
+          console.log("recognizeImage res:", JSON.stringify(response));
           const blocks = response.blocks;
           const recognizedText = blocks.map((block) => block.text).join("\n");
           setText(recognizedText);

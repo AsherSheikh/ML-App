@@ -4,7 +4,7 @@ import TextRecognition from "./src/components/TextRecognition";
 import MLKitComponents from "./src/components/MLkitComponents";
 
 const App = () => {
-  const [show, setShow] = useState("text-recognitaion");
+  const [show, setShow] = useState("face-detection");
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
