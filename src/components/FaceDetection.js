@@ -14,6 +14,7 @@ const FaceDetection = () => {
   const [image2Selected, setImage2Selected] = useState(false);
   const [report, setReport] = useState("");
 
+  const Separator = () => <View style={styles.separator} />;
   const handleRest = () => {
     setImages([]);
     setShowFrame(false);
@@ -21,7 +22,7 @@ const FaceDetection = () => {
     setShowContours(false);
     setImage1Selected(false);
     setImage2Selected(false);
-    setReport('');
+    setReport("");
   };
 
   const handleChoose = async (currentImage, faceName) => {
@@ -86,7 +87,7 @@ const FaceDetection = () => {
       landmarkScore,
       overallScore,
       probability,
-      isSamePerson: probability > 0.8, // You can adjust this threshold based on your requirements
+      isSamePerson: probability > 0.7, // You can adjust this threshold based on your requirements
     };
   }
 
@@ -204,8 +205,9 @@ const FaceDetection = () => {
             </View>
           </View>
         )}
-        <View style={{ flex: 1, justifyContent: "center" }}>
+        <View style={{ flex: 1, justifyContent: "center", paddingHorizontal: 10 }}>
           {!image1Selected && <ChooseImageButton title={"Choose an Image 1"} onChoose={(currentImage) => handleChoose(currentImage, "face1")} />}
+          <Separator />
           {!image2Selected && <ChooseImageButton title={"Choose an Image 2"} onChoose={(currentImage) => handleChoose(currentImage, "face2")} />}
           {image2Selected && image1Selected && <Button title={"Reset"} onPress={handleRest} />}
 
@@ -233,9 +235,14 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     backgroundColor: "black",
   },
-  compareText: { color: "white", fontSize: 16 },
-  reportText: { color: "black", fontSize: 14, paddingHorizontal: 10 },
-  compareContaier: { width: "90%", height: 50, alignSelf: "center", marginVertical: 20, borderRadius: 10, backgroundColor: "blue", justifyContent: "center", alignItems: "center" },
+  compareText: { color: "white", fontSize: 16,fontWeight:'600' },
+  reportText: { color: "black", fontSize: 14, paddingHorizontal: 10,marginVertical:10 },
+  compareContaier: { width: "90%", height: 50, alignSelf: "center", marginVertical: 20, borderRadius: 10, backgroundColor: "tomato", justifyContent: "center", alignItems: "center" },
+  separator: {
+    marginVertical: 8,
+    borderBottomColor: "#737373",
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
 });
 
 export default FaceDetection;

@@ -1,6 +1,5 @@
 import { View, Text, SafeAreaView, Button, TouchableOpacity, StyleSheet } from "react-native";
 import React, { useState } from "react";
-import TextRecognition from "./src/components/TextRecognition";
 import MLKitComponents from "./src/components/MLkitComponents";
 
 const App = () => {
@@ -9,6 +8,7 @@ const App = () => {
     { value: "face-detection", title: "Face Detection" },
     { value: "text-recognitaion", title: "Text Recogination" },
   ];
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.buttonsContainer}>
@@ -28,6 +28,15 @@ const App = () => {
 export default App;
 const styles = StyleSheet.create({
   buttonsContainer: { flexDirection: "row", alignItems: "center", flexWrap: "wrap", justifyContent: "center" },
-  buttonContainer: { backgroundColor: "#327ba8", paddingHorizontal: 20, paddingVertical: 10, marginHorizontal: 5, marginVertical: 10, borderRadius: 5 },
-  buttonText: { fontSize: 14, color: "white",fontWeight:'600' },
+  buttonContainer: {
+    borderColor: "#327ba8",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    marginHorizontal: 5,
+    marginVertical: 10,
+    borderRadius: 5,
+    borderWidth: 2,
+  },
+  buttonText: { fontSize: 14, color: "#327ba8", fontWeight: "500" },
+  selectText: { fontSize: 16, color: "#327b", fontWeight: "500" },
 });
