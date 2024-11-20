@@ -2,7 +2,7 @@ import React from "react";
 import { Button } from "react-native";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 
-const ChooseImageButton = ({ onChoose }) => {
+const ChooseImageButton = ({ onChoose, title }) => {
   const handlePress = () => {
     const options = {
       mediaType: "photo",
@@ -24,7 +24,7 @@ const ChooseImageButton = ({ onChoose }) => {
     });
   };
 
-  return <Button title="Choose an Image" onPress={handlePress} />;
+  return <Button title={title} onPress={handlePress} />;
 };
 
 export default ChooseImageButton;

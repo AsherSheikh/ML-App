@@ -20,7 +20,7 @@ const FaceMap = ({ face, width, height, showLandmarks, showContours, showFrame }
 
   return (
     <Svg style={styles.container} width={width} height={height}>
-      {showFrame && <Rect stroke="white" fill="red" strokeWidth={2} strokeOpacity={0.75} width={frame.width} height={frame.height} x={frame.left} y={frame.top} />}
+      {showFrame && <Rect stroke="red" fill="transparent" strokeWidth={2} strokeOpacity={0.75} width={frame.width} height={frame.height} x={frame.left} y={frame.top} />}
 
       {showLandmarks &&
         landmarks &&
@@ -39,7 +39,7 @@ const FaceMap = ({ face, width, height, showLandmarks, showContours, showFrame }
               {points.map((point, pointId) => {
                 const { x, y } = scaledPoint(point);
 
-                return <Circle key={`${pointId}-${x}-${y}`} x={x} y={y} r={2} fill="skyblue" opacity={0.5} />;
+                return <Circle key={`${pointId}-${x}-${y}`} x={x} y={y} r={2} fill="blue" opacity={0.5} />;
               })}
 
               <Path d={pointsToPath(points)} fill="transparent" strokeWidth={2} stroke="white" strokeOpacity={0.5} />

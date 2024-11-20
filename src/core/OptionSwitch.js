@@ -15,10 +15,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginTop: 10,
+    marginHorizontal: 5,
   },
   switchLabel: {
     color: "#333",
-    marginLeft: 15,
+    marginLeft: 10,
   },
 });
 
