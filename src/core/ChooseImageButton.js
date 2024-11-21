@@ -4,45 +4,55 @@ import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 
 const ChooseImageButton = ({ onChoose, title, type }) => {
   const handleLibrary = () => {
-    const options = {
-      mediaType: "photo",
-    };
-    launchImageLibrary(options, (response) => {
-      if (response.didCancel) {
-        console.log("User cancelled image picker");
-      } else if (response.errorCode) {
-        console.log("ImagePicker Error: ", response.errorMessage);
-      } else {
-        const asset = response.assets[0];
-        const currentImage = {
-          path: asset.uri,
-          width: asset.width,
-          height: asset.height,
-        };
-        onChoose(currentImage);
-      }
-    });
+    try {
+      const options = {
+        mediaType: "photo",
+      };
+      launchImageLibrary(options, (response) => {
+        if (response.didCancel) {
+          console.log("User cancelled image picker");
+        } else if (response.errorCode) {
+          console.log("ImagePicker Error: ", response.errorMessage);
+        } else {
+          const asset = response?.assets[0];
+          const currentImage = {
+            path: asset.uri,
+            width: asset.width,
+            height: asset.height,
+          };
+          onChoose(currentImage);
+        }
+      });
+    } catch (error) {
+      console.log("handleLibrary catch:", error);
+    }
   };
 
   const handleCamera = () => {
-    const options = {
-      mediaType: "photo",
-    };
-    launchCamera(options, (response) => {
-      if (response.didCancel) {
-        console.log("User cancelled image picker");
-      } else if (response.errorCode) {
-        console.log("ImagePicker Error: ", response.errorMessage);
-      } else {
-        const asset = response.assets[0];
-        const currentImage = {
-          path: asset.uri,
-          width: asset.width,
-          height: asset.height,
-        };
-        onChoose(currentImage);
-      }
-    });
+    try {
+      const options = {
+        mediaType: "photo",
+        quality: 1,
+        saveToPhotos: true,
+      };
+      launchCamera(options, (response) => {
+        if (response.didCancel) {
+          console.log("User cancelled image picker");
+        } else if (response.errorCode) {
+          console.log("ImagePicker Error: ", response.errorMessage);
+        } else {
+          const asset = response.assets[0];
+          const currentImage = {
+            path: asset.uri,
+            width: asset.width,
+            height: asset.height,
+          };
+          onChoose(currentImage);
+        }
+      });
+    } catch (error) {
+      console.log("handleCamera catch:", error);
+    }
   };
 
   return (

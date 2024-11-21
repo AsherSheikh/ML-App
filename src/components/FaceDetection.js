@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import OptionSwitch from "../core/OptionSwitch";
 import FaceMap from "./FaceMap";
 import ChooseImageButton from "../core/ChooseImageButton";
@@ -15,7 +15,8 @@ const FaceDetection = () => {
   const [report, setReport] = useState("");
 
   const Separator = () => <View style={styles.separator} />;
-  const handleRest = () => {
+
+  const handleReset = () => {
     setImages([]);
     setShowFrame(false);
     setShowLandmarks(false);
@@ -34,53 +35,58 @@ const FaceDetection = () => {
     } else if (faceName === "face2") {
       setImage2Selected(false);
     }
+    setReport("");
   };
 
   const handleChoose = async (currentImage, faceName) => {
-    try {
-      // Detection options
-      const options = {
-        performanceMode: "accurate",
-        landmarkMode: "all",
-        contourMode: "all",
-        classificationMode: "all",
-        minFaceSize: 0.1,
-        trackingEnabled: true,
-      };
-
-      // Perform face detection
-      const result = await detectFace(currentImage.path, options);
-      const faceData = result[0]; // Get the first detected face
-      if (faceData) {
-        // Create a single object with the image and face data
-        const imageDetail = {
-          image: currentImage,
-          faceName,
-          faceData, // Directly storing the result from face detection
+    if (currentImage) {
+      try {
+        // Detection options
+        const options = {
+          performanceMode: "accurate",
+          landmarkMode: "all",
+          contourMode: "all",
+          classificationMode: "all",
+          minFaceSize: 0.1,
+          trackingEnabled: true,
         };
 
-        // Update the state with the new imageDetail object
-        setImages((prev) => [...prev, imageDetail]);
-        if (faceName === "face1") {
-          setImage1Selected(true);
-        } else if (faceName === "face2") {
-          setImage2Selected(true);
+        // Perform face detection
+        const result = await detectFace(currentImage.path, options);
+        const faceData = result[0]; // Get the first detected face
+        if (faceData) {
+          // Create a single object with the image and face data
+          const imageDetail = {
+            image: currentImage,
+            faceName,
+            faceData, // Directly storing the result from face detection
+          };
+
+          // Update the state with the new imageDetail object
+          setImages((prev) => [...prev, imageDetail]);
+          if (faceName === "face1") {
+            setImage1Selected(true);
+          } else if (faceName === "face2") {
+            setImage2Selected(true);
+          }
+          setReport("");
+        } else {
+          setReport({ Face: "No face detected" });
         }
-        setReport("");
-      } else {
-        setReport({ Face: "No face detected" });
+        // Optionally log the result for debugging
+        // console.log("detectFace result:", JSON.stringify(result));
+      } catch (error) {
+        console.error("Error in handleChoose:", error);
       }
-      // Optionally log the result for debugging
-      // console.log("detectFace result:", JSON.stringify(result));
-    } catch (error) {
-      console.error("Error in handleChoose:", error);
+    } else {
+      console.error("no image found");
     }
   };
 
   function calculateFaceSimilarity(basicMetrics, landmarkDistances, maxTolerableDistance = 300) {
     // Basic Metrics Contribution
     const basicScore = (basicMetrics?.leftEyeOpenSimilarity + basicMetrics?.rightEyeOpenSimilarity + basicMetrics?.smileSimilarity + basicMetrics.rotationSimilarity?.average) / 4;
-
+    const threshold = 0.7; // Adjust this threshold based on your requirements
     // Landmark Distances Contribution
     const totalLandmarkDistance = Object.values(landmarkDistances).reduce((sum, value) => sum + value, 0);
     const averageLandmarkDistance = totalLandmarkDistance / Object.keys(landmarkDistances).length;
@@ -102,7 +108,7 @@ const FaceDetection = () => {
       landmarkScore,
       overallScore,
       probability,
-      isSamePerson: probability > 0.7, // You can adjust this threshold based on your requirements
+      isSamePerson: probability > threshold, // You can adjust this threshold based on your requirements
     };
   }
 
@@ -252,15 +258,19 @@ const FaceDetection = () => {
           )}
 
           {report && (
-            <>
+            <View>
               <Text style={styles.header}>Detection Results:</Text>
               <Text style={styles.reportText}>{renderObject(report)} </Text>
-            </>
+            </View>
           )}
-          {image2Selected && image1Selected && <Button title={"Reset"} onPress={handleRest} />}
           {image1Selected && image2Selected && (
             <TouchableOpacity onPress={handleCompareFaces} style={styles.compareContaier}>
-              <Text style={styles.compareText}>Comapre</Text>
+              <Text style={styles.compareText}>Compare</Text>
+            </TouchableOpacity>
+          )}
+          {image2Selected && image1Selected && (
+            <TouchableOpacity onPress={handleReset} style={styles.compareContaier}>
+              <Text style={styles.compareText}>Reset</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -287,7 +297,7 @@ const styles = StyleSheet.create({
   compareText: { color: "white", fontSize: 16, fontWeight: "600" },
   chooseText: { color: "black", fontSize: 16, fontWeight: "400" },
   reportText: { color: "black", fontSize: 14, paddingHorizontal: 10, marginVertical: 10 },
-  compareContaier: { width: "90%", height: 50, alignSelf: "center", marginVertical: 20, borderRadius: 10, backgroundColor: "tomato", justifyContent: "center", alignItems: "center" },
+  compareContaier: { width: "90%", height: 45, alignSelf: "center", marginBottom: 10, borderRadius: 5, backgroundColor: "tomato", justifyContent: "center", alignItems: "center" },
   separator: {
     marginVertical: 8,
     borderBottomColor: "#737373",

@@ -22,7 +22,7 @@ const App = () => {
   }, []);
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
       <View style={styles.buttonsContainer}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {buttons.map((type, i) => {
