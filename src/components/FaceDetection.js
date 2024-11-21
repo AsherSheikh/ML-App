@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, FlatList, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Button, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import OptionSwitch from "../core/OptionSwitch";
 import FaceMap from "./FaceMap";
 import ChooseImageButton from "../core/ChooseImageButton";
@@ -25,6 +25,17 @@ const FaceDetection = () => {
     setReport("");
   };
 
+  const removeImage = (index, faceName) => {
+    const updatedImages = [...images];
+    updatedImages.splice(index, 1);
+    setImages(updatedImages);
+    if (faceName === "face1") {
+      setImage1Selected(false);
+    } else if (faceName === "face2") {
+      setImage2Selected(false);
+    }
+  };
+
   const handleChoose = async (currentImage, faceName) => {
     try {
       // Detection options
@@ -40,23 +51,27 @@ const FaceDetection = () => {
       // Perform face detection
       const result = await detectFace(currentImage.path, options);
       const faceData = result[0]; // Get the first detected face
+      if (faceData) {
+        // Create a single object with the image and face data
+        const imageDetail = {
+          image: currentImage,
+          faceName,
+          faceData, // Directly storing the result from face detection
+        };
 
-      // Create a single object with the image and face data
-      const imageDetail = {
-        image: currentImage,
-        faceName,
-        faceData, // Directly storing the result from face detection
-      };
-
-      // Update the state with the new imageDetail object
-      setImages((prev) => [...prev, imageDetail]);
-      if (faceName === "face1") {
-        setImage1Selected(true);
-      } else if (faceName === "face2") {
-        setImage2Selected(true);
+        // Update the state with the new imageDetail object
+        setImages((prev) => [...prev, imageDetail]);
+        if (faceName === "face1") {
+          setImage1Selected(true);
+        } else if (faceName === "face2") {
+          setImage2Selected(true);
+        }
+        setReport("");
+      } else {
+        setReport({ Face: "No face detected" });
       }
       // Optionally log the result for debugging
-      // console.log("detectFace result:", JSON.stringify(faceData));
+      // console.log("detectFace result:", JSON.stringify(result));
     } catch (error) {
       console.error("Error in handleChoose:", error);
     }
@@ -171,7 +186,16 @@ const FaceDetection = () => {
     }
   };
 
-  console.log("compare report :", JSON.stringify(report));
+  const renderObject = (obj) => {
+    return Object.entries(obj).map(([key, value], index) => (
+      <View key={index} style={{ marginBottom: 5 }}>
+        <Text style={styles.keyText}>{key}:</Text>
+        {typeof value === "object" && value !== null ? <View style={{ marginLeft: 10 }}>{renderObject(value)}</View> : <Text style={styles.valueText}>{String(value)}</Text>}
+      </View>
+    ));
+  };
+
+  // console.log("compare report :", JSON.stringify(report));
   return (
     <View style={styles.container}>
       <Text style={{ fontWeight: "bold", marginVertical: 10, paddingHorizontal: 10 }}>GOOGLE ML-KIT - FACE DETECTION</Text>
@@ -181,7 +205,10 @@ const FaceDetection = () => {
             <View>
               {images?.map((item, index) => {
                 return (
-                  <View key={index}>
+                  <View style={{ marginBottom: 10 }} key={index}>
+                    <TouchableOpacity style={styles.removeContainer} onPress={() => removeImage(index, item?.faceName)}>
+                      <Text style={styles.removeText}>Remove</Text>
+                    </TouchableOpacity>
                     <Image source={{ uri: item?.image?.path }} style={styles.image} />
                     <FaceMap
                       key={Math.random()}
@@ -204,12 +231,33 @@ const FaceDetection = () => {
           )}
         </View>
         <View style={{ flex: 1, justifyContent: "center", paddingHorizontal: 10 }}>
-          {!image1Selected && <ChooseImageButton title={"Choose an Image 1"} onChoose={(currentImage) => handleChoose(currentImage, "face1")} />}
+          {!image1Selected && (
+            <View>
+              <Text style={styles.chooseText}>Choose Image 1</Text>
+              <View style={styles.flexRow}>
+                <ChooseImageButton type={"camera"} title={"Open Camera"} onChoose={(currentImage) => handleChoose(currentImage, "face1")} />
+                <ChooseImageButton title={"Open Gallery"} onChoose={(currentImage) => handleChoose(currentImage, "face1")} />
+              </View>
+            </View>
+          )}
           <Separator />
-          {!image2Selected && <ChooseImageButton title={"Choose an Image 2"} onChoose={(currentImage) => handleChoose(currentImage, "face2")} />}
-          {image2Selected && image1Selected && <Button title={"Reset"} onPress={handleRest} />}
+          {!image2Selected && (
+            <View>
+              <Text style={styles.chooseText}>Choose Image 2</Text>
+              <View style={styles.flexRow}>
+                <ChooseImageButton type={"camera"} title={"Open Camera"} onChoose={(currentImage) => handleChoose(currentImage, "face2")} />
+                <ChooseImageButton title={"Open Gallery"} onChoose={(currentImage) => handleChoose(currentImage, "face2")} />
+              </View>
+            </View>
+          )}
 
-          {report && <Text style={styles.reportText}>Report: {JSON.stringify(report)} </Text>}
+          {report && (
+            <>
+              <Text style={styles.header}>Detection Results:</Text>
+              <Text style={styles.reportText}>{renderObject(report)} </Text>
+            </>
+          )}
+          {image2Selected && image1Selected && <Button title={"Reset"} onPress={handleRest} />}
           {image1Selected && image2Selected && (
             <TouchableOpacity onPress={handleCompareFaces} style={styles.compareContaier}>
               <Text style={styles.compareText}>Comapre</Text>
@@ -225,6 +273,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  flexRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-evenly" },
   imagesContainer: { flexDirection: "row", alignItems: "center", justifyContent: "space-evenly" },
   switchContainer: { flexWrap: "wrap", flexDirection: "row", alignItems: "center", marginTop: 20 },
   image: {
@@ -233,13 +282,29 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     backgroundColor: "black",
   },
+  removeContainer: { zIndex: 10, right: 0, padding: 5, position: "absolute" },
+  removeText: { fontSize: 12, fontWeight: "500", color: "red" },
   compareText: { color: "white", fontSize: 16, fontWeight: "600" },
+  chooseText: { color: "black", fontSize: 16, fontWeight: "400" },
   reportText: { color: "black", fontSize: 14, paddingHorizontal: 10, marginVertical: 10 },
   compareContaier: { width: "90%", height: 50, alignSelf: "center", marginVertical: 20, borderRadius: 10, backgroundColor: "tomato", justifyContent: "center", alignItems: "center" },
   separator: {
     marginVertical: 8,
     borderBottomColor: "#737373",
     borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  header: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginTop: 10,
+  },
+  keyText: {
+    fontSize: 14,
+    fontWeight: "bold",
+  },
+  valueText: {
+    fontSize: 14,
+    color: "#333",
   },
 });
 

@@ -28,7 +28,6 @@ environment.js
 build/
 .idea
 .gradle
-local.properties
 *.iml
 *.hprof
 .cxx/
